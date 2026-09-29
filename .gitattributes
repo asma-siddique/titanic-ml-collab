@@ -1,0 +1,2 @@
+# LF everywhere so DVC's hashes of code and params files match on Windows, macOS and Linux.
+* text=auto eol=lf
