@@ -37,6 +37,20 @@ fix: correct the split ratio
 - Release PRs (`dev` → `staging`, `staging` → `main`) and merging `main` back into `dev` use a
   **merge commit**, so the three long-lived branches never diverge.
 
+## Pre-commit hooks
+
+Run `pre-commit install` once in every fresh clone. From then on, every `git commit` runs:
+
+- **ruff**: lints (with safe auto-fixes) and formats Python code.
+- **nbstripout**: strips outputs and execution counts from notebooks.
+- **check-added-large-files**: blocks any file over 1 MB. Data and models belong in DVC.
+- **detect-secrets**: blocks API keys, tokens and passwords.
+- **check-merge-conflict** and **check-yaml**: catch leftover conflict markers and broken YAML.
+
+If a hook modifies files (ruff or nbstripout), the commit stops: run `git add` on the changed files
+and commit again. Never bypass the hooks with `--no-verify`. To check every file at once, run
+`pre-commit run --all-files`.
+
 ## Pull requests
 
 - A teammate reviews and approves every PR before it merges.
