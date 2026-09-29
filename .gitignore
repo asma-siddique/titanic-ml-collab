@@ -1,0 +1,40 @@
+# Datasets and model checkpoints are versioned with DVC, never with Git.
+# Under data/ and models/, only DVC pointer files and DVC's own .gitignore files may be committed.
+/data/**
+!/data/**/
+!/data/**/*.dvc
+!/data/**/.gitignore
+!/data/**/.gitkeep
+/models/**
+!/models/**/
+!/models/**/*.dvc
+!/models/**/.gitignore
+!/models/**/.gitkeep
+*.joblib
+*.pkl
+*.ckpt
+
+# Secrets
+.env
+
+# Environments
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Experiment tracking
+mlruns/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
