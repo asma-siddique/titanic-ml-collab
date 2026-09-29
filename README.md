@@ -20,6 +20,7 @@ Requires Python 3.11.
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+pre-commit install             # once per clone: runs the checks on every commit
 ```
 
 ## Data
