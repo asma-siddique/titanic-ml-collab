@@ -51,6 +51,17 @@ If a hook modifies files (ruff or nbstripout), the commit stops: run `git add` o
 and commit again. Never bypass the hooks with `--no-verify`. To check every file at once, run
 `pre-commit run --all-files`.
 
+## Notebooks
+
+Every notebook is paired with a `.py` script (jupytext, percent format), so diffs and merges read
+like code.
+
+- Create the pair once: `jupytext --set-formats ipynb,py:percent notebooks/<name>.ipynb`.
+- After editing either file, run `jupytext --sync notebooks/<name>.ipynb` and commit both.
+- Restart the kernel and run all cells top to bottom before opening a PR. nbstripout removes
+  outputs and execution counts on commit, so the PR diff stays clean.
+- Move reusable logic into `src/` with a test in `tests/`, and import it back into the notebook.
+
 ## Pull requests
 
 - A teammate reviews and approves every PR before it merges.
