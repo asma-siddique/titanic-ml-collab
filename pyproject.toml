@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# A bare expression is how a notebook cell shows its result.
+"notebooks/*.py" = ["B018"]
