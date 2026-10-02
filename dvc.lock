@@ -57,13 +57,13 @@ stages:
         seed: 42
         train:
           model: random_forest
-          n_estimators: 100
-          max_depth: 6
+          n_estimators: 200
+          max_depth: 10
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 3f4b25b3eb1d9e0ea339506ba541c8de
-      size: 589737
+      md5: d36dc4fb2452b92eda23913751238fd4
+      size: 3190537
   evaluate:
     cmd: python -m src.evaluate
     deps:
@@ -73,8 +73,8 @@ stages:
       size: 4201
     - path: models/model.joblib
       hash: md5
-      md5: 3f4b25b3eb1d9e0ea339506ba541c8de
-      size: 589737
+      md5: d36dc4fb2452b92eda23913751238fd4
+      size: 3190537
     - path: src/data.py
       hash: md5
       md5: f6f6777666302e108acd38269919f967
@@ -90,5 +90,5 @@ stages:
     outs:
     - path: metrics.json
       hash: md5
-      md5: 54bfae2c6b81d07c7acacbd49c036faf
+      md5: 1de0d51192550076f81af482a62b488e
       size: 150
