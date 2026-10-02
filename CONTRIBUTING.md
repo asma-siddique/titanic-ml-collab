@@ -62,6 +62,15 @@ like code.
   outputs and execution counts on commit, so the PR diff stays clean.
 - Move reusable logic into `src/` with a test in `tests/`, and import it back into the notebook.
 
+## Reproducible runs
+
+- Put every seed, split ratio and hyperparameter in `params.yaml`; never hardcode them.
+- Fit scalers, encoders and imputers on the training split only.
+- Commit your code **before** running `dvc repro` or `dvc exp run`, so the `git_sha` in
+  `metrics.json` matches the code that produced the result. `git_dirty: true` means it did not.
+- After `dvc repro`, commit `dvc.yaml`, `dvc.lock`, `params.yaml` and `metrics.json`, then run
+  `dvc push` before `git push`.
+
 ## Pull requests
 
 - A teammate reviews and approves every PR before it merges.
