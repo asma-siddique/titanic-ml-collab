@@ -1,0 +1,39 @@
+stages:
+  prepare:
+    cmd: python -m src.prepare
+    deps:
+      - data/raw/titanic.csv
+      - src/prepare.py
+      - src/data.py
+      - src/utils.py
+    params:
+      - seed
+      - split
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+
+  train:
+    cmd: python -m src.train
+    deps:
+      - data/processed/train.csv
+      - src/train.py
+      - src/data.py
+      - src/utils.py
+    params:
+      - seed
+      - train
+    outs:
+      - models/model.joblib
+
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+      - data/processed/test.csv
+      - models/model.joblib
+      - src/evaluate.py
+      - src/data.py
+      - src/utils.py
+    metrics:
+      - metrics.json:
+          cache: false

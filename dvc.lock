@@ -1,0 +1,94 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.prepare
+    deps:
+    - path: data/raw/titanic.csv
+      hash: md5
+      md5: 61fdd54abdbf6a85b778e937122e1194
+      size: 60302
+    - path: src/data.py
+      hash: md5
+      md5: f6f6777666302e108acd38269919f967
+      size: 1412
+    - path: src/prepare.py
+      hash: md5
+      md5: 8f014b7870cdf1a9ec52fb01571a1a7b
+      size: 1104
+    - path: src/utils.py
+      hash: md5
+      md5: 75e16df23c0e390d4ef47dedafb33d47
+      size: 986
+    params:
+      params.yaml:
+        seed: 42
+        split:
+          test_size: 0.2
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 152ac801b67ffa9e9ac7bdd54e849777
+      size: 4201
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ac6b3fff61a512507d24421e4f7bf42a
+      size: 16440
+  train:
+    cmd: python -m src.train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ac6b3fff61a512507d24421e4f7bf42a
+      size: 16440
+    - path: src/data.py
+      hash: md5
+      md5: f6f6777666302e108acd38269919f967
+      size: 1412
+    - path: src/train.py
+      hash: md5
+      md5: 029b1ee8301788b1d0cc42156c7cbbd6
+      size: 1130
+    - path: src/utils.py
+      hash: md5
+      md5: 75e16df23c0e390d4ef47dedafb33d47
+      size: 986
+    params:
+      params.yaml:
+        seed: 42
+        train:
+          model: random_forest
+          n_estimators: 100
+          max_depth: 6
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: 3f4b25b3eb1d9e0ea339506ba541c8de
+      size: 589737
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 152ac801b67ffa9e9ac7bdd54e849777
+      size: 4201
+    - path: models/model.joblib
+      hash: md5
+      md5: 3f4b25b3eb1d9e0ea339506ba541c8de
+      size: 589737
+    - path: src/data.py
+      hash: md5
+      md5: f6f6777666302e108acd38269919f967
+      size: 1412
+    - path: src/evaluate.py
+      hash: md5
+      md5: ccb016268f2a2bc0a02b1e908899b1d6
+      size: 1052
+    - path: src/utils.py
+      hash: md5
+      md5: 75e16df23c0e390d4ef47dedafb33d47
+      size: 986
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 54bfae2c6b81d07c7acacbd49c036faf
+      size: 150
