@@ -1,8 +1,6 @@
-"""Titanic survival: train a random forest and report accuracy on a held-out split.
+"""Stage 2: train the model on the prepared training split.
 
-Starter script, adapted to run from the command line. From the repository root:
-
-    python src/train.py
+Run from the repository root: python -m src.train
 """
 
 from pathlib import Path
@@ -10,33 +8,31 @@ from pathlib import Path
 import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
 
-DATA_PATH = Path("data/raw/titanic.csv")
+from src.data import split_features_target
+from src.utils import load_params, set_seeds
+
+TRAIN_PATH = "data/processed/train.csv"
 MODEL_PATH = Path("models/model.joblib")
 
-FEATURES = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked"]
-TARGET = "Survived"
+
+def build_model(train_params: dict, seed: int) -> RandomForestClassifier:
+    if train_params["model"] != "random_forest":
+        raise ValueError(f"Unknown model: {train_params['model']!r}")
+    return RandomForestClassifier(
+        n_estimators=train_params["n_estimators"],
+        max_depth=train_params["max_depth"],
+        random_state=seed,
+    )
 
 
 def main() -> None:
-    df = pd.read_csv(DATA_PATH)
+    params = load_params()
+    set_seeds(params["seed"])
 
-    df["Age"] = df["Age"].fillna(df["Age"].median())
-    df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
-    df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
-    df["Embarked"] = df["Embarked"].map({"S": 0, "C": 1, "Q": 2})
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        df[FEATURES], df[TARGET], test_size=0.2, random_state=42
-    )
-
-    model = RandomForestClassifier(n_estimators=100, max_depth=6, random_state=42)
+    X_train, y_train = split_features_target(pd.read_csv(TRAIN_PATH))
+    model = build_model(params["train"], params["seed"])
     model.fit(X_train, y_train)
-
-    accuracy = accuracy_score(y_test, model.predict(X_test))
-    print(f"Test accuracy: {accuracy:.4f}")
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, MODEL_PATH)
