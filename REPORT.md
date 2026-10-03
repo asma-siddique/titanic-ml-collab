@@ -183,9 +183,26 @@ red while the other four jobs stay green:
 
 ## 7. Contributions
 
-**Asma Siddique.** PRs authored: #1 and #3 (merged into `main` by mistake), #2 pre-commit hooks, #5
-sync, #6 EDA notebook and `extract_title`, #9 and #16 experiment winners, #11 lock refresh, #15
-line-ending fix. **TODO (Asma):** one paragraph in your own words, plus the PRs you reviewed.
+**Asma Siddique.** PRs authored (13, of which 12 merged): #1 and #3 (merged into `main` by mistake),
+#2 pre-commit hooks, #4 (closed, replaced by #5) and #5 sync, #6 EDA notebook and `extract_title`, #9
+and #16 experiment winners, #11 lock refresh, #15 line-ending fix, #22 the report, and the release PRs
+#23 and #24.
+
+I set up the repository and the `dev`, `staging` and `main` branches, and wrote the initial project
+layout, `.gitignore`, starter training script and `CONTRIBUTING.md` in the Phase 2 import. I owned the
+data side of the project: I added pre-commit hooks for linting, notebook cleaning, large files and
+secrets (#2), put the Titanic dataset under DVC with a DagsHub remote (#3), and built the EDA notebook
+paired with a jupytext script, moving a tested `extract_title` feature into `src/` (#6). In the
+experiments I ran two rounds of random-forest tuning and promoted the winners, `max_depth` 10 (#9) and
+then 9 (#16), which raised test accuracy from 0.8045 to 0.8380. I also found that on Windows
+`metrics.json` was written with CRLF line endings, so `dvc status` always reported it as modified, and
+fixed it in #15, and I refreshed the lock after the data change (#11). For the release I opened the
+report PR (#22) and both release PRs (#23, #24), ran the independent reproduction on a fresh clone and
+a new environment, where the metrics matched exactly, and tagged `model-v1.0`. I reviewed
+Rameesha's PRs by checking out each branch and running `dvc pull`, `dvc status`, `dvc metrics show`
+and the tests: I approved #10, #17 and #19, and I requested changes on #20 because its description
+was still the empty template, then approved it once it was fixed. I worked with an AI coding assistant
+that drafted code and commands, which I ran, reviewed and committed.
 
 **Rameesha Shakeel.** PRs authored: #8 reproducible DVC pipeline, #10 data update, #12 data
 validation checks, #13 lock refresh, #14 and #17 experiment winners (#17 resolved the conflict), #18
