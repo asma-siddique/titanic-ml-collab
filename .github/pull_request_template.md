@@ -1,4 +1,4 @@
-﻿## What changed and why
+## What changed and why
 
 ## Metrics (before → after)
 
