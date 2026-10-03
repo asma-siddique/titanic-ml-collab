@@ -6,11 +6,13 @@ CI.
 
 ## Team
 
-| Name | Role |
-| --- | --- |
-| TBD | Data owner |
-| TBD | Model owner |
-| TBD | Platform owner |
+| Name | GitHub | Role |
+| --- | --- | --- |
+| Asma Siddique | `asma-siddique` | Data owner; Platform owner (pre-commit, environment) |
+| Rameesha Shakeel | `Rameesha1234` | Model owner; Platform owner (CI) |
+
+The full write-up, with reproducibility details and the experiment results, is in
+[REPORT.md](REPORT.md).
 
 ## Setup
 
