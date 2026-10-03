@@ -21,6 +21,12 @@ MODEL_PATH = "models/model.joblib"
 METRICS_PATH = Path("metrics.json")
 
 
+def write_metrics(metrics: dict, path: Path = METRICS_PATH) -> None:
+    # newline="\n" keeps the bytes the same on Windows, where write_text would
+    # use \r\n and DVC would record a hash that Git's checkout never reproduces.
+    path.write_text(json.dumps(metrics, indent=2) + "\n", newline="\n")
+
+
 def main() -> None:
     model = joblib.load(MODEL_PATH)
     X_test, y_test = split_features_target(pd.read_csv(TEST_PATH))
@@ -31,7 +37,7 @@ def main() -> None:
         "f1": f1_score(y_test, predictions),
         **git_info(),
     }
-    METRICS_PATH.write_text(json.dumps(metrics, indent=2) + "\n")
+    write_metrics(metrics)
     print(json.dumps(metrics, indent=2))
 
 
