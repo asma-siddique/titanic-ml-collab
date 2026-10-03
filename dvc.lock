@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/raw/titanic.csv
       hash: md5
-      md5: 61fdd54abdbf6a85b778e937122e1194
-      size: 60302
+      md5: a2d78b1ac5e448c5d3d898cc0c0eee47
+      size: 62896
     - path: src/data.py
       hash: md5
       md5: f6f6777666302e108acd38269919f967
