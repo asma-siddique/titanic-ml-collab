@@ -210,4 +210,16 @@ and #19 PR template, #20 CI workflow.
 
 I contributed to the project through the CI/CD workflow, testing, model experimentation, and reproducibility work. I worked on the GitHub Actions CI pipeline, including linting, unit tests, data validation, and smoke training checks. I also demonstrated CI failure handling by intentionally introducing a failing test, verifying that the tests job detected the failure, documenting the failure with screenshots, and closing the demonstration PR without merging it into `dev`. For model experimentation, I evaluated Random Forest configurations by comparing different `max_depth` and `n_estimators` settings. The depth-9 configuration improved the model's accuracy and F1 compared with the depth-8 configuration, and I then tested a reduced 150-tree configuration that preserved the same evaluation metrics as the 200-tree depth-9 model. This helped select a more efficient final model configuration while maintaining performance.
 
-**TODO (Rameesha):** add the PRs you reviewed.
+As Model owner I also built the reproducible DVC pipeline (#8): every seed, split ratio and
+hyperparameter moved into `params.yaml`, three stages (`prepare`, `train`, `evaluate`) defined in
+`dvc.yaml`, preprocessing fit on the training split only, and the commit SHA logged in `metrics.json`.
+On the data side I made the data update that filled the two missing `Embarked` values (#10), wrote the
+data-validation checks for schema, duplicate IDs and valid ports (#12) that CI later reused, and
+refreshed the evaluation lock (#13). I promoted my own experiment winner, `max_depth` 8 (#14), and in
+#17 I rebased my change onto Asma's merged `max_depth` 9, resolved the `params.yaml` conflict and
+re-ran the pipeline, which showed that 150 trees keep the same accuracy as 200. I also added the PR
+template (#18, #19) and the CI workflow with its CML metrics comment (#20), and I approved the
+release PR #23 after running it.
+
+**TODO (Rameesha):** confirm the two paragraphs above and add the PRs you reviewed
+([your reviews on GitHub](https://github.com/asma-siddique/titanic-ml-collab/pulls?q=is%3Apr+reviewed-by%3ARameesha1234)).
