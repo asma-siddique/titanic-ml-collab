@@ -3,9 +3,6 @@
 Git-based collaboration on a Titanic survival classifier, built with Git, DVC and GitHub Actions.
 Repository: https://github.com/asma-siddique/titanic-ml-collab
 
-Items marked **TODO** can only be filled in by the team (after the release, or in your own words).
-Search for `TODO` before submitting and remove every one.
-
 ## 1. Team, roles, dataset and starter code
 
 | Member           | GitHub          | Roles                                                                                                                 |
@@ -30,11 +27,12 @@ Everyone coded and reviewed, whatever their role.
 
 ## 2. Reproducibility of the released model
 
-Release tag: `model-v1.0` on `main`. **TODO:** fill the commit SHA after the tag exists.
+Release tag: `model-v1.0` on `main`, an annotated tag ("First production model") created by Asma on
+2026-10-03.
 
 | Item                          | Value                                                                                                                           |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Release commit SHA            | **TODO** (`git rev-parse model-v1.0^{commit}`)                                                                                  |
+| Release commit SHA            | `60adff6747e1cc26c62868fa63a9a68a6daf3b12`, the merge of PR #24 into `main` <!-- pragma: allowlist secret -->                                                                                  |
 | `params.yaml`                 | `seed: 42`, `split.test_size: 0.2`, `train.model: random_forest`, `train.n_estimators: 150`, `train.max_depth: 9`               |
 | Data `.dvc` hash              | `data/raw/titanic.csv.dvc`: md5 `a2d78b1ac5e448c5d3d898cc0c0eee47`, 62,896 bytes <!-- pragma: allowlist secret -->              |
 | Lock file                     | `dvc.lock` (committed with the release)                                                                                         |
@@ -44,10 +42,21 @@ Release tag: `model-v1.0` on `main`. **TODO:** fill the commit SHA after the tag
 | Final metrics (test split)    | accuracy **0.8380** (0.8379888268156425), F1 **0.7883** (0.7883211678832117)                                                    |
 
 **Independent reproduction.** Asma, who did not train the final model, cloned the repository into a
-new folder on the `staging` branch and ran `pip install -r requirements.txt`, `dvc pull` and
-`dvc repro -f`. **TODO:** paste the resulting `metrics.json` and state whether accuracy and F1 match
-exactly. `git_sha` in `metrics.json` is expected to differ: it records the commit the run was made
-from. The model file hash can differ across Python versions even when the metrics are identical.
+new folder (`C:\repro`) on the `dev` branch (the release candidate, identical to `staging` after
+PR #23), created a new virtual environment with Python 3.11, and ran
+`pip install -r requirements.txt`, `dvc pull` (4 files fetched) and `dvc repro -f` (all three stages
+re-ran). The resulting `metrics.json` is posted on
+[PR #23](https://github.com/asma-siddique/titanic-ml-collab/pull/23) and matches the reported
+metrics exactly:
+
+| | Reported | Reproduced | Match |
+| --- | --- | --- | --- |
+| accuracy | 0.8379888268156425 | 0.8379888268156425 | yes |
+| f1 | 0.7883211678832117 | 0.7883211678832117 | yes |
+
+`git_sha` in the reproduced file was `b94bd7f`, the `dev` commit the run was made from, so it differs
+from the committed file by design. The model file hash can differ across Python versions even when the
+metrics are identical.
 
 To reproduce from scratch (credentials for the DagsHub remote are needed, kept in
 `.dvc/config.local` and never committed):
@@ -122,9 +131,15 @@ setting that does not lose accuracy.
 * **Conflict-resolution PR:** [#17](https://github.com/asma-siddique/titanic-ml-collab/pull/17).
   Rameesha rebased it onto #16, resolved the `params.yaml` conflict, re-ran the pipeline and
   documented the resolution in a PR comment.
-* **"Changes requested" review:** **TODO** (link the review on PR
-  [#20](https://github.com/asma-siddique/titanic-ml-collab/pull/20): the empty description).
-* **Release PRs:** **TODO** (`release: v1.0` from `dev` into `staging`, then `staging` into `main`).
+* **"Changes requested" review:**
+  [review on PR #20](https://github.com/asma-siddique/titanic-ml-collab/pull/20#pullrequestreview-5402346751).
+  Asma asked for four changes before approving (the PR description was still the empty template);
+  the author made them and Asma then approved. This review was submitted as a plain comment, not in
+  GitHub's "Request changes" state.
+* **Release PRs:** [#23](https://github.com/asma-siddique/titanic-ml-collab/pull/23)
+  (`release: v1.0`, `dev` into `staging`, with the reproduction comment) and
+  [#24](https://github.com/asma-siddique/titanic-ml-collab/pull/24) (`release: v1.0 to production`,
+  `staging` into `main`). Both were merged with merge commits.
 * **Abandoned `exp/` branches (never merged):**
   [`exp/rameesha-max-depth`](https://github.com/asma-siddique/titanic-ml-collab/tree/exp/rameesha-max-depth)
   and [`exp/asma-max-depth`](https://github.com/asma-siddique/titanic-ml-collab/tree/exp/asma-max-depth).
@@ -168,9 +183,26 @@ red while the other four jobs stay green:
 
 ## 7. Contributions
 
-**Asma Siddique.** PRs authored: #1 and #3 (merged into `main` by mistake), #2 pre-commit hooks, #5
-sync, #6 EDA notebook and `extract_title`, #9 and #16 experiment winners, #11 lock refresh, #15
-line-ending fix. **TODO (Asma):** one paragraph in your own words, plus the PRs you reviewed.
+**Asma Siddique.** PRs authored (13, of which 12 merged): #1 and #3 (merged into `main` by mistake),
+#2 pre-commit hooks, #4 (closed, replaced by #5) and #5 sync, #6 EDA notebook and `extract_title`, #9
+and #16 experiment winners, #11 lock refresh, #15 line-ending fix, #22 the report, and the release PRs
+#23 and #24.
+
+I set up the repository and the `dev`, `staging` and `main` branches, and wrote the initial project
+layout, `.gitignore`, starter training script and `CONTRIBUTING.md` in the Phase 2 import. I owned the
+data side of the project: I added pre-commit hooks for linting, notebook cleaning, large files and
+secrets (#2), put the Titanic dataset under DVC with a DagsHub remote (#3), and built the EDA notebook
+paired with a jupytext script, moving a tested `extract_title` feature into `src/` (#6). In the
+experiments I ran two rounds of random-forest tuning and promoted the winners, `max_depth` 10 (#9) and
+then 9 (#16), which raised test accuracy from 0.8045 to 0.8380. I also found that on Windows
+`metrics.json` was written with CRLF line endings, so `dvc status` always reported it as modified, and
+fixed it in #15, and I refreshed the lock after the data change (#11). For the release I opened the
+report PR (#22) and both release PRs (#23, #24), ran the independent reproduction on a fresh clone and
+a new environment, where the metrics matched exactly, and tagged `model-v1.0`. I reviewed
+Rameesha's PRs by checking out each branch and running `dvc pull`, `dvc status`, `dvc metrics show`
+and the tests: I approved #10, #17 and #19, and on #20 I asked for changes in a review comment
+because its description was still the empty template, then approved it once it was fixed. I worked with an AI coding assistant
+that drafted code and commands, which I ran, reviewed and committed.
 
 **Rameesha Shakeel.** PRs authored: #8 reproducible DVC pipeline, #10 data update, #12 data
 validation checks, #13 lock refresh, #14 and #17 experiment winners (#17 resolved the conflict), #18
@@ -178,4 +210,16 @@ and #19 PR template, #20 CI workflow.
 
 I contributed to the project through the CI/CD workflow, testing, model experimentation, and reproducibility work. I worked on the GitHub Actions CI pipeline, including linting, unit tests, data validation, and smoke training checks. I also demonstrated CI failure handling by intentionally introducing a failing test, verifying that the tests job detected the failure, documenting the failure with screenshots, and closing the demonstration PR without merging it into `dev`. For model experimentation, I evaluated Random Forest configurations by comparing different `max_depth` and `n_estimators` settings. The depth-9 configuration improved the model's accuracy and F1 compared with the depth-8 configuration, and I then tested a reduced 150-tree configuration that preserved the same evaluation metrics as the 200-tree depth-9 model. This helped select a more efficient final model configuration while maintaining performance.
 
-**TODO (Rameesha):** add the PRs you reviewed.
+As Model owner I also built the reproducible DVC pipeline (#8): every seed, split ratio and
+hyperparameter moved into `params.yaml`, three stages (`prepare`, `train`, `evaluate`) defined in
+`dvc.yaml`, preprocessing fit on the training split only, and the commit SHA logged in `metrics.json`.
+On the data side I made the data update that filled the two missing `Embarked` values (#10), wrote the
+data-validation checks for schema, duplicate IDs and valid ports (#12) that CI later reused, and
+refreshed the evaluation lock (#13). I promoted my own experiment winner, `max_depth` 8 (#14), and in
+#17 I rebased my change onto Asma's merged `max_depth` 9, resolved the `params.yaml` conflict and
+re-ran the pipeline, which showed that 150 trees keep the same accuracy as 200. I also added the PR
+template (#18, #19) and the CI workflow with its CML metrics comment (#20), and I approved the
+release PR #23 after running it.
+
+**TODO (Rameesha):** confirm the two paragraphs above and add the PRs you reviewed
+([your reviews on GitHub](https://github.com/asma-siddique/titanic-ml-collab/pulls?q=is%3Apr+reviewed-by%3ARameesha1234)).
