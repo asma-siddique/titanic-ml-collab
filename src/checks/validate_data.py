@@ -67,14 +67,70 @@ def check_null_rate(df: pd.DataFrame, column: str, max_fraction: float) -> list[
     return errors
 
 
-def main():
-    df = pd.read_csv(ROOT / "data" / "raw" / "titanic.csv")
+ALLOWED_VALUES = {
+    "Survived": {0, 1},
+    "Pclass": {1, 2, 3},
+    "Sex": {"male", "female"},
+}
 
-    all_errors = []
-    all_errors += check_schema(df)
-    all_errors += check_passenger_id_unique(df)
-    all_errors += check_embarked_values(df)
-    all_errors += check_null_rate(df, "Age", max_fraction=0.30)
+NUMERIC_RANGES = {
+    "Age": (0, 120),
+    "Fare": (0, 600),
+    "SibSp": (0, 10),
+    "Parch": (0, 10),
+}
+
+MAX_NULL_FRACTION = {
+    "Survived": 0.0,
+    "Pclass": 0.0,
+    "Sex": 0.0,
+    "Fare": 0.0,
+    "Age": 0.30,
+    "Embarked": 0.01,
+}
+
+
+def check_allowed_values(df: pd.DataFrame, column: str, allowed: set) -> list[str]:
+    invalid = set(df[column].dropna().unique()) - allowed
+    if invalid:
+        return [f"Invalid {column} values found: {sorted(map(str, invalid))}"]
+    return []
+
+
+def check_numeric_range(
+    df: pd.DataFrame, column: str, low: float, high: float
+) -> list[str]:
+    values = df[column].dropna()
+    out_of_range = values[(values < low) | (values > high)]
+    if len(out_of_range):
+        message = (
+            f"{column} has {len(out_of_range)} value(s) outside [{low}, {high}], "
+            f"for example {out_of_range.iloc[0]}"
+        )
+        return [message]
+    return []
+
+
+def validate(df: pd.DataFrame) -> list[str]:
+    errors = check_schema(df)
+    if errors:
+        return errors
+    errors += check_passenger_id_unique(df)
+    errors += check_embarked_values(df)
+    for column, allowed in ALLOWED_VALUES.items():
+        errors += check_allowed_values(df, column, allowed)
+    for column, (low, high) in NUMERIC_RANGES.items():
+        errors += check_numeric_range(df, column, low, high)
+    for column, max_fraction in MAX_NULL_FRACTION.items():
+        errors += check_null_rate(df, column, max_fraction)
+    return errors
+
+
+def main():
+    path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "data/raw/titanic.csv"
+    df = pd.read_csv(path)
+
+    all_errors = validate(df)
 
     if all_errors:
         print("Data validation FAILED:")
