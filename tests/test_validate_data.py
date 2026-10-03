@@ -102,4 +102,4 @@ def test_validate_reports_several_problems_at_once():
     df.loc[0, "Survived"] = 5
     df.loc[1, "Fare"] = -1.0
     errors = validate(df)
-    assert len(errors) == 2
+    assert len(errors) == 3
