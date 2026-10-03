@@ -71,9 +71,38 @@ like code.
 - After `dvc repro`, commit `dvc.yaml`, `dvc.lock`, `params.yaml` and `metrics.json`, then run
   `dvc push` before `git push`.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every PR into `dev`, `staging` and `main`. Four checks must pass
+before a PR can merge:
+
+| Check | What it runs |
+| --- | --- |
+| `lint` | `ruff check .` and `ruff format --check .` |
+| `tests` | `pytest tests/` |
+| `data-checks` | `python -m src.checks.validate_data tests/data/titanic_sample.csv`: schema, allowed values, value ranges and null counts |
+| `smoke-train` | `prepare`, `train` and `evaluate` end to end on the 300-row sample |
+
+A fifth job, `metrics-comment`, posts a before/after metrics table on the PR with CML. It is
+informational and not required.
+
+To run the same checks before you push:
+
+```
+ruff check .
+ruff format --check .
+pytest tests/
+python -m src.checks.validate_data tests/data/titanic_sample.csv
+```
+
+CI never downloads the real dataset: it uses the committed sample in `tests/data/`, so no DVC
+credentials are stored in GitHub. If a check is red, fix it on your branch and push again; do not
+merge around it.
+
 ## Pull requests
 
 - A teammate reviews and approves every PR before it merges.
+- All CI checks must be green before merging.
 - If data or models changed, run `dvc push` **before** `git push`.
 
 ## Roles

@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, staging, main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install ruff (same version as the pre-commit hook)
+        run: pip install ruff==0.16.9
+      - name: Lint
+        run: ruff check .
+      - name: Check formatting
+        run: ruff format --check .
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Unit tests
+        run: pytest tests/
+
+  data-checks:
+    name: data-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Schema, value ranges and null counts on the committed sample
+        run: python -m src.checks.validate_data tests/data/titanic_sample.csv
+
+  smoke-train:
+    name: smoke-train
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Use the committed sample as the dataset
+        run: |
+          mkdir -p data/raw
+          cp tests/data/titanic_sample.csv data/raw/titanic.csv
+      - name: Prepare, train and evaluate end to end
+        run: |
+          python -m src.prepare
+          python -m src.train
+          python -m src.evaluate
+      - name: Check the metrics are sane
+        run: python -c "import json; m = json.load(open('metrics.json')); assert 0 < m['accuracy'] <= 1 and 0 <= m['f1'] <= 1, m"
+
+  metrics-comment:
+    name: metrics-comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      DVC_NO_ANALYTICS: "1"
+      BASE_REF: ${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - uses: iterative/setup-cml@v2
+      - name: Build the metrics table (base branch vs this PR)
+        run: |
+          table=$(dvc metrics diff "origin/$BASE_REF" --md --precision 4)
+          if ! echo "$table" | grep -q "metrics.json"; then
+            table="No metric changes in this PR."
+          fi
+          {
+            echo "## Metrics: \`$BASE_REF\` vs this PR"
+            echo
+            echo "$table"
+          } > report.md
+      - name: Post the table as a PR comment
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cml comment create --update report.md
