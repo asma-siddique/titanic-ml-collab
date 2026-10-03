@@ -6,11 +6,13 @@ CI.
 
 ## Team
 
-| Name | Role |
-| --- | --- |
-| TBD | Data owner |
-| TBD | Model owner |
-| TBD | Platform owner |
+| Name | GitHub | Role |
+| --- | --- | --- |
+| Asma Siddique | `asma-siddique` | Data owner; Platform owner (pre-commit, environment) |
+| Rameesha Shakeel | `Rameesha1234` | Model owner; Platform owner (CI) |
+
+The full write-up, with reproducibility details and the experiment results, is in
+[REPORT.md](REPORT.md).
 
 ## Setup
 
@@ -41,15 +43,28 @@ dvc pull
 
 Never commit the token. `--local` writes it to `.dvc/config.local`, which Git ignores.
 
-## Train
+## Pipeline
+
+The pipeline is defined in `dvc.yaml` and has three stages. Every seed, split ratio and
+hyperparameter lives in `params.yaml`.
+
+| Stage | Command | What it does |
+| --- | --- | --- |
+| `prepare` | `python -m src.prepare` | Splits the raw data, fits the imputers on the training split only, writes `data/processed/` |
+| `train` | `python -m src.train` | Trains the random forest and writes `models/model.joblib` |
+| `evaluate` | `python -m src.evaluate` | Scores the test split and writes `metrics.json` |
 
 From the repository root:
 
 ```bash
-python src/train.py
+dvc pull      # fetch the raw data
+dvc repro     # run the stages whose inputs changed
+dvc metrics show
 ```
 
-This prints the accuracy on a held-out 20% split and saves the model to `models/model.joblib`.
+`metrics.json` holds the accuracy and F1 score, plus the commit SHA the run was made from
+(`git_sha`) and whether `src/` or `dvc.yaml` had uncommitted changes (`git_dirty`). Commit your code
+before running the pipeline, so the SHA matches the code that produced the numbers.
 
 ## Contributing
 
