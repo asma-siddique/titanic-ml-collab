@@ -6,4 +6,4 @@ split:
 train:
   model: random_forest
   n_estimators: 200
-  max_depth: 8
+  max_depth: 9
