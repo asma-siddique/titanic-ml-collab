@@ -30,11 +30,12 @@ Everyone coded and reviewed, whatever their role.
 
 ## 2. Reproducibility of the released model
 
-Release tag: `model-v1.0` on `main`. **TODO:** fill the commit SHA after the tag exists.
+Release tag: `model-v1.0` on `main`, an annotated tag ("First production model") created by Asma on
+2026-10-03.
 
 | Item                          | Value                                                                                                                           |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Release commit SHA            | **TODO** (`git rev-parse model-v1.0^{commit}`)                                                                                  |
+| Release commit SHA            | `60adff6747e1cc26c62868fa63a9a68a6daf3b12`, the merge of PR #24 into `main` <!-- pragma: allowlist secret -->                                                                                  |
 | `params.yaml`                 | `seed: 42`, `split.test_size: 0.2`, `train.model: random_forest`, `train.n_estimators: 150`, `train.max_depth: 9`               |
 | Data `.dvc` hash              | `data/raw/titanic.csv.dvc`: md5 `a2d78b1ac5e448c5d3d898cc0c0eee47`, 62,896 bytes <!-- pragma: allowlist secret -->              |
 | Lock file                     | `dvc.lock` (committed with the release)                                                                                         |
@@ -44,10 +45,21 @@ Release tag: `model-v1.0` on `main`. **TODO:** fill the commit SHA after the tag
 | Final metrics (test split)    | accuracy **0.8380** (0.8379888268156425), F1 **0.7883** (0.7883211678832117)                                                    |
 
 **Independent reproduction.** Asma, who did not train the final model, cloned the repository into a
-new folder on the `staging` branch and ran `pip install -r requirements.txt`, `dvc pull` and
-`dvc repro -f`. **TODO:** paste the resulting `metrics.json` and state whether accuracy and F1 match
-exactly. `git_sha` in `metrics.json` is expected to differ: it records the commit the run was made
-from. The model file hash can differ across Python versions even when the metrics are identical.
+new folder (`C:\repro`) on the `dev` branch (the release candidate, identical to `staging` after
+PR #23), created a new virtual environment with Python 3.11, and ran
+`pip install -r requirements.txt`, `dvc pull` (4 files fetched) and `dvc repro -f` (all three stages
+re-ran). The resulting `metrics.json` is posted on
+[PR #23](https://github.com/asma-siddique/titanic-ml-collab/pull/23) and matches the reported
+metrics exactly:
+
+| | Reported | Reproduced | Match |
+| --- | --- | --- | --- |
+| accuracy | 0.8379888268156425 | 0.8379888268156425 | yes |
+| f1 | 0.7883211678832117 | 0.7883211678832117 | yes |
+
+`git_sha` in the reproduced file was `b94bd7f`, the `dev` commit the run was made from, so it differs
+from the committed file by design. The model file hash can differ across Python versions even when the
+metrics are identical.
 
 To reproduce from scratch (credentials for the DagsHub remote are needed, kept in
 `.dvc/config.local` and never committed):
@@ -124,7 +136,10 @@ setting that does not lose accuracy.
   documented the resolution in a PR comment.
 * **"Changes requested" review:** **TODO** (link the review on PR
   [#20](https://github.com/asma-siddique/titanic-ml-collab/pull/20): the empty description).
-* **Release PRs:** **TODO** (`release: v1.0` from `dev` into `staging`, then `staging` into `main`).
+* **Release PRs:** [#23](https://github.com/asma-siddique/titanic-ml-collab/pull/23)
+  (`release: v1.0`, `dev` into `staging`, with the reproduction comment) and
+  [#24](https://github.com/asma-siddique/titanic-ml-collab/pull/24) (`release: v1.0 to production`,
+  `staging` into `main`). Both were merged with merge commits.
 * **Abandoned `exp/` branches (never merged):**
   [`exp/rameesha-max-depth`](https://github.com/asma-siddique/titanic-ml-collab/tree/exp/rameesha-max-depth)
   and [`exp/asma-max-depth`](https://github.com/asma-siddique/titanic-ml-collab/tree/exp/asma-max-depth).
