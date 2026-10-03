@@ -87,3 +87,42 @@ jobs:
           python -m src.evaluate
       - name: Check the metrics are sane
         run: python -c "import json; m = json.load(open('metrics.json')); assert 0 < m['accuracy'] <= 1 and 0 <= m['f1'] <= 1, m"
+
+  metrics-comment:
+    name: metrics-comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      DVC_NO_ANALYTICS: "1"
+      BASE_REF: ${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - uses: iterative/setup-cml@v2
+      - name: Build the metrics table (base branch vs this PR)
+        run: |
+          table=$(dvc metrics diff "origin/$BASE_REF" --md --precision 4)
+          if ! echo "$table" | grep -q "metrics.json"; then
+            table="No metric changes in this PR."
+          fi
+          {
+            echo "## Metrics: \`$BASE_REF\` vs this PR"
+            echo
+            echo "$table"
+          } > report.md
+      - name: Post the table as a PR comment
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cml comment create --update report.md
