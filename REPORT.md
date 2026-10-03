@@ -133,8 +133,9 @@ setting that does not lose accuracy.
   documented the resolution in a PR comment.
 * **"Changes requested" review:**
   [review on PR #20](https://github.com/asma-siddique/titanic-ml-collab/pull/20#pullrequestreview-5402346751).
-  Asma requested changes because the PR description was still the empty template; the author filled
-  it in and Asma then approved.
+  Asma asked for four changes before approving (the PR description was still the empty template);
+  the author made them and Asma then approved. This review was submitted as a plain comment, not in
+  GitHub's "Request changes" state.
 * **Release PRs:** [#23](https://github.com/asma-siddique/titanic-ml-collab/pull/23)
   (`release: v1.0`, `dev` into `staging`, with the reproduction comment) and
   [#24](https://github.com/asma-siddique/titanic-ml-collab/pull/24) (`release: v1.0 to production`,
@@ -199,8 +200,8 @@ fixed it in #15, and I refreshed the lock after the data change (#11). For the r
 report PR (#22) and both release PRs (#23, #24), ran the independent reproduction on a fresh clone and
 a new environment, where the metrics matched exactly, and tagged `model-v1.0`. I reviewed
 Rameesha's PRs by checking out each branch and running `dvc pull`, `dvc status`, `dvc metrics show`
-and the tests: I approved #10, #17 and #19, and I requested changes on #20 because its description
-was still the empty template, then approved it once it was fixed. I worked with an AI coding assistant
+and the tests: I approved #10, #17 and #19, and on #20 I asked for changes in a review comment
+because its description was still the empty template, then approved it once it was fixed. I worked with an AI coding assistant
 that drafted code and commands, which I ran, reviewed and committed.
 
 **Rameesha Shakeel.** PRs authored: #8 reproducible DVC pipeline, #10 data update, #12 data
