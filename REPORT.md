@@ -3,9 +3,6 @@
 Git-based collaboration on a Titanic survival classifier, built with Git, DVC and GitHub Actions.
 Repository: https://github.com/asma-siddique/titanic-ml-collab
 
-Items marked **TODO** can only be filled in by the team (after the release, or in your own words).
-Search for `TODO` before submitting and remove every one.
-
 ## 1. Team, roles, dataset and starter code
 
 | Member           | GitHub          | Roles                                                                                                                 |
@@ -134,8 +131,10 @@ setting that does not lose accuracy.
 * **Conflict-resolution PR:** [#17](https://github.com/asma-siddique/titanic-ml-collab/pull/17).
   Rameesha rebased it onto #16, resolved the `params.yaml` conflict, re-ran the pipeline and
   documented the resolution in a PR comment.
-* **"Changes requested" review:** **TODO** (link the review on PR
-  [#20](https://github.com/asma-siddique/titanic-ml-collab/pull/20): the empty description).
+* **"Changes requested" review:**
+  [review on PR #20](https://github.com/asma-siddique/titanic-ml-collab/pull/20#pullrequestreview-5402346751).
+  Asma requested changes because the PR description was still the empty template; the author filled
+  it in and Asma then approved.
 * **Release PRs:** [#23](https://github.com/asma-siddique/titanic-ml-collab/pull/23)
   (`release: v1.0`, `dev` into `staging`, with the reproduction comment) and
   [#24](https://github.com/asma-siddique/titanic-ml-collab/pull/24) (`release: v1.0 to production`,
