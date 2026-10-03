@@ -105,6 +105,24 @@ merge around it.
 - All CI checks must be green before merging.
 - If data or models changed, run `dvc push` **before** `git push`.
 
+## Lessons from the project
+
+Rules we added after things went wrong (details in `REPORT.md`):
+
+- **Always check the base branch.** Open PRs with `.../compare/dev...<branch>`. Two early PRs (#1, #3)
+  went into `main` because GitHub defaults to the default branch. The default branch is now `dev`.
+- **Use one Python version: 3.11.** Python 3.14 produced a different model file hash for the same
+  metrics.
+- **Keep generated files on Unix line endings.** Write them with `newline="\n"` (see
+  `write_metrics`); a CRLF `metrics.json` made `dvc status` report a change on every checkout (#15).
+- **Set every parameter in every `dvc exp run`** (`-S train.n_estimators=... -S train.max_depth=...`).
+  A run that sets only one silently inherits the other from the previous run.
+- **A data PR includes its pipeline results.** After changing data, run `dvc repro` and commit
+  `dvc.lock` and `metrics.json` in the same PR, and keep the data diff minimal (#10 rewrote 852 cells
+  to change 2 values; #11 and #13 fixed the stale lock).
+- **Save text files as UTF-8 without a BOM.** A BOM broke the PR template's first heading (#19).
+- **Secret scanner exclusions:** DVC pointers, `dvc.lock` and `metrics.json` hold hashes, not secrets.
+
 ## Roles
 
 - **Data owner:** DVC, data checks, dataset updates.
