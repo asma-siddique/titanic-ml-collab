@@ -223,6 +223,6 @@ template (#18, #19) and the CI workflow with its CML metrics comment (#20), and 
 release PR #23 after running it.
 
 I reviewed Asma's PRs by checking out each branch and running `dvc pull`, `dvc status`,
-`dvc metrics show` and the tests before approving. PRs I reviewed: #1, #2, #3, #5, #6, #9, #11, #15, #16, #22, #23, #24, #25, #26..
+`dvc metrics show` and the tests before approving. PRs I reviewed: #2, #3, #5, #6, #9, #11, #15, #16, #22, #23, #24, #25, #26.
 On the release PR #23 I approved the release candidate and added the review checklist as a comment.
 I confirm that the two paragraphs above describe my contribution.
