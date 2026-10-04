@@ -122,6 +122,9 @@ Rules we added after things went wrong (details in `REPORT.md`):
   to change 2 values; #11 and #13 fixed the stale lock).
 - **Save text files as UTF-8 without a BOM.** A BOM broke the PR template's first heading (#19).
 - **Secret scanner exclusions:** DVC pointers, `dvc.lock` and `metrics.json` hold hashes, not secrets.
+- **Never commit directly to `dev`, `staging` or `main`, including from the GitHub web editor.** In the
+  editor choose "Create a new branch for this commit and start a pull request". One direct commit
+  (`dfd7443`) got onto `dev` this way because rulesets are not enforced on a private repo.
 
 ## Roles
 
