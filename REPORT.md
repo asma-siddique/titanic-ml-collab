@@ -221,5 +221,7 @@ re-ran the pipeline, which showed that 150 trees keep the same accuracy as 200. 
 template (#18, #19) and the CI workflow with its CML metrics comment (#20), and I approved the
 release PR #23 after running it.
 
-**TODO (Rameesha):** confirm the two paragraphs above and add the PRs you reviewed
-([your reviews on GitHub](https://github.com/asma-siddique/titanic-ml-collab/pulls?q=is%3Apr+reviewed-by%3ARameesha1234)).
+I reviewed Asma's PRs by checking out each branch and running `dvc pull`, `dvc status`,
+`dvc metrics show` and the tests before approving. PRs I reviewed: #16, #23 (list yours).
+On the release PR #23 I approved the release candidate and added the review checklist as a comment.
+I confirm that the two paragraphs above describe my contribution.
