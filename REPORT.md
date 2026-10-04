@@ -10,7 +10,7 @@ Repository: https://github.com/asma-siddique/titanic-ml-collab
 | Asma Siddique    | `asma-siddique` | Data owner (DVC, data checks, dataset updates); Platform owner, first half (pre-commit hooks, environment, notebooks) |
 | Rameesha Shakeel | `Rameesha1234`  | Model owner (training pipeline, configs, experiments); Platform owner, second half (CI, PR template)                  |
 
-Everyone coded and reviewed, whatever their role.
+Everyone coded and reviewed, whatever their role..
 
 * **Dataset:** the Kaggle Titanic training set, `train.csv` (891 passengers, 12 columns):
   https://www.kaggle.com/c/titanic/data. We downloaded the same file from a public mirror,
